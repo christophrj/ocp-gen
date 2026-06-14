@@ -6,13 +6,13 @@
 
 `ocp-gen` defines a `Command` interface to transform go source files line by line.
 
-`Commands` are process by a `Runner` which processes go source files in single pass fashion.
+`Commands` are executed by a `Runner` which processes go source files in single pass fashion.
 
 This requires `Commands` to be stateful in regards of their activation state and arguments.
 
 ## Runner
 
-A `Runner` takes an abitrary number of `Command` to execute on individual go source files.
+A `Runner` takes an abitrary number of `Commands` to transform individual go source files.
 
 When nesting `Commands` in source files, be aware of the order that `Commands` are defined in the `Runner`.
 
