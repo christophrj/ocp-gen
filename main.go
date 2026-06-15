@@ -37,6 +37,7 @@ func main() {
 
 	// dry run prints in memory result unless debug is set
 	if !debug {
+		fmt.Fprintf(os.Stdout, "### %s\n", filepath)
 		_, _ = fmt.Fprint(os.Stdout, result.String())
 	}
 }
