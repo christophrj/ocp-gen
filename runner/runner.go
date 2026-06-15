@@ -10,7 +10,7 @@ import (
 	"github.com/christophrj/ocp-gen/commands"
 )
 
-const ocpgen = "//go:generate ocp-gen"
+const ocpgen = "go:generate ocp-gen"
 
 // Runner takes a set of Commands
 type Runner struct {
