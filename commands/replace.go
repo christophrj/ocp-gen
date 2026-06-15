@@ -8,7 +8,7 @@ import (
 	"github.com/christophrj/ocp-gen/logs"
 )
 
-const ociReplace = "// ocp-gen:replace"
+const ociReplace = "ocp-gen:replace"
 
 var _ Command = &replaceCommand{}
 

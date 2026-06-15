@@ -8,8 +8,8 @@ import (
 )
 
 const (
-	ocpIf = "// ocp-gen:if"
-	ocpFi = "// ocp-gen:fi"
+	ocpIf = "ocp-gen:if"
+	ocpFi = "ocp-gen:fi"
 )
 
 var _ Command = &ifCommand{}
