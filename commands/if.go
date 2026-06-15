@@ -1,13 +1,15 @@
 package commands
 
 import (
-	"log"
+	"fmt"
 	"os"
+
+	"github.com/christophrj/ocp-gen/logs"
 )
 
 const (
-	ocpIf = "//ocp-gen:if"
-	ocpFi = "//ocp-gen:fi"
+	ocpIf = "// ocp-gen:if"
+	ocpFi = "// ocp-gen:fi"
 )
 
 var _ Command = &ifCommand{}
@@ -31,24 +33,24 @@ func (r *ifCommand) Execute(loc string) string {
 	if CommandPrefix(loc, ocpIf) {
 		args := commandArguments(loc, ocpIf)
 		if len(args) > 1 {
-			log.Printf("(%s) failed to parse (%s): invalid number of arguments\n", os.Getenv("GOFILE"), loc)
+			logs.Debug(fmt.Sprintf("(%s) failed to parse (%s): invalid number of arguments", os.Getenv("GOFILE"), loc))
 		}
 		r.active = true
 		r.condition = EvalBoolEnv(args[0])
-		log.Printf("ifCommand condition = %v\n", r.condition)
-		log.Printf("removed line: %s\n", loc)
+		logs.Debug(fmt.Sprintf("ifCommand condition = %v", r.condition))
+		logs.Debug(fmt.Sprintf("removed line: %s", loc))
 		// remove the ocp-gen comment as part of the processing
 		return ""
 	}
 	if CommandPrefix(loc, ocpFi) {
 		r.active = false
 		r.condition = false
-		log.Printf("removed line: %s\n", loc)
+		logs.Debug(fmt.Sprintf("removed line: %s", loc))
 		// remove the ocp-gen comment as part of the processing
 		return ""
 	}
 	if r.active && !r.condition {
-		log.Printf("removed line: %s\n", loc)
+		logs.Debug(fmt.Sprintf("removed line: %s", loc))
 		return ""
 	}
 	return loc

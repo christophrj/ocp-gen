@@ -6,15 +6,18 @@ import (
 	"os"
 
 	"github.com/christophrj/ocp-gen/commands"
+	"github.com/christophrj/ocp-gen/logs"
 	"github.com/christophrj/ocp-gen/runner"
 )
 
 func main() {
 	dryRun := commands.EvalBoolEnv("DRY_RUN")
-	filepath := os.Getenv("PWD") + "/" + os.Getenv("GOFILE")
+	debug := commands.EvalBoolEnv("DEBUG")
 
-	log.Printf("generator called from file (%s) with the following flags...\n", filepath)
-	log.Printf("\t-dry-run=%v", dryRun)
+	logs.Init(debug)
+
+	filepath := os.Getenv("PWD") + "/" + os.Getenv("GOFILE")
+	logs.Debug(fmt.Sprintf("generator called from file (%s) with the following flags...", filepath))
 
 	runner := runner.Runner{
 		Commands: []commands.Command{
@@ -32,6 +35,8 @@ func main() {
 		return
 	}
 
-	// print in memory result
-	_, _ = fmt.Fprint(os.Stdout, result.String())
+	// dry run prints in memory result unless debug is set
+	if !debug {
+		_, _ = fmt.Fprint(os.Stdout, result.String())
+	}
 }

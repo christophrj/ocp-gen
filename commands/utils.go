@@ -3,16 +3,15 @@ package commands
 import (
 	"os"
 	"strings"
-	"unicode"
 )
 
 func CommandPrefix(loc, commandIdentifier string) bool {
-	return strings.HasPrefix(strings.TrimLeftFunc(loc, unicode.IsSpace), commandIdentifier)
+	return strings.HasPrefix(strings.TrimSpace(loc), commandIdentifier)
 }
 
 func commandArguments(loc, commandIdentifier string) []string {
-	trimPrefix := strings.TrimLeftFunc(strings.TrimPrefix(strings.TrimLeftFunc(loc, unicode.IsSpace), commandIdentifier), unicode.IsSpace)
-	return strings.Split(trimPrefix, " ")
+	command := strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(loc), commandIdentifier))
+	return strings.Split(command, " ")
 }
 
 func EvalBoolEnv(envVar string) bool {

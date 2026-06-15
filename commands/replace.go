@@ -1,12 +1,14 @@
 package commands
 
 import (
-	"log"
+	"fmt"
 	"os"
 	"strings"
+
+	"github.com/christophrj/ocp-gen/logs"
 )
 
-const ociReplace = "//ocp-gen:replace"
+const ociReplace = "// ocp-gen:replace"
 
 var _ Command = &replaceCommand{}
 
@@ -36,17 +38,17 @@ func (r *replaceCommand) Execute(loc string) string {
 		for _, a := range args {
 			spPair := strings.SplitN(a, "=", 2)
 			if len(spPair) != 2 {
-				log.Printf("(%s) failed to parse (%s): invalid number of arguments\n", os.Getenv("GOFILE"), loc)
+				logs.Debug(fmt.Sprintf("(%s) failed to parse (%s): invalid number of arguments", os.Getenv("GOFILE"), loc))
 				return loc
 			}
 			replace, ok := os.LookupEnv(spPair[1])
 			if !ok {
-				log.Printf("(%s) failed to lookup env (%s) of (%s)\n", os.Getenv("GOFILE"), spPair[1], loc)
+				logs.Debug(fmt.Sprintf("(%s) failed to lookup env (%s) of (%s)", os.Getenv("GOFILE"), spPair[1], loc))
 			}
 			r.arguments = append(r.arguments, searchAndReplace{search: spPair[0], replace: replace})
 		}
 		r.active = true
-		log.Printf("removed line: %s\n", loc)
+		logs.Debug(fmt.Sprintf("removed line: %s", loc))
 		// remove the ocp-gen comment as part of the processing
 		return ""
 	}
@@ -55,7 +57,7 @@ func (r *replaceCommand) Execute(loc string) string {
 		for _, arg := range r.arguments {
 			loc = strings.ReplaceAll(loc, arg.search, arg.replace)
 		}
-		log.Printf("(%s) replaced (%s) with (%s)\n", os.Getenv("GOFILE"), original, loc)
+		logs.Debug(fmt.Sprintf("(%s) replaced (%s) with (%s)", os.Getenv("GOFILE"), original, loc))
 		// replace is a one line command that instantly deactivates itself after processing a line of code
 		r.active = false
 	}
