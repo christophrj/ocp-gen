@@ -33,19 +33,18 @@ func NewReplaceCommand() Command {
 // Execute implements [Command].
 func (r *replaceCommand) Execute(loc string) string {
 	if CommandPrefix(loc, ociReplace) {
-		args := commandArguments(loc, ociReplace)
+		argAssignments := assignments(loc, ociReplace)
+		if len(argAssignments) < 1 {
+			logs.Debug(fmt.Sprintf("(%s) failed to parse (%s): invalid number of assignments", os.Getenv("GOFILE"), loc))
+			return loc
+		}
 		r.arguments = []searchAndReplace{}
-		for _, a := range args {
-			spPair := strings.SplitN(a, "=", 2)
-			if len(spPair) != 2 {
-				logs.Debug(fmt.Sprintf("(%s) failed to parse (%s): invalid number of arguments", os.Getenv("GOFILE"), loc))
-				return loc
-			}
-			replace, ok := os.LookupEnv(spPair[1])
+		for _, a := range argAssignments {
+			replace, ok := os.LookupEnv(a.right)
 			if !ok {
-				logs.Debug(fmt.Sprintf("(%s) failed to lookup env (%s) of (%s)", os.Getenv("GOFILE"), spPair[1], loc))
+				logs.Debug(fmt.Sprintf("(%s) failed to lookup env (%s) of (%s)", os.Getenv("GOFILE"), a.right, loc))
 			}
-			r.arguments = append(r.arguments, searchAndReplace{search: spPair[0], replace: replace})
+			r.arguments = append(r.arguments, searchAndReplace{search: a.left, replace: replace})
 		}
 		r.active = true
 		logs.Debug(fmt.Sprintf("removed line: %s", loc))

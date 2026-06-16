@@ -22,27 +22,27 @@ When nesting `Commands` in source files, be aware of the order that `Commands` a
 
 ```go
 //go:generate ocp-gen
-package pkg
+package test
 
-//ocp-gen:replace TestReconciler=RECONCILER_NAME
+// ocp-gen:replace TestReconciler=RECONCILER_NAME
 type TestReconciler struct {
- namespace string
- //ocp-gen:if WITH_FIELDS
- conditionalName string
- // test nested command
- //ocp-gen:replace Age=GOLINE
- conditionalAge int
- //ocp-gen:fi
+	namespace string
+	//ocp-gen:if CONDITIONAL=include
+	conditionalName string
+	// test nested command
+	//ocp-gen:replace Age=GOLINE
+	conditionalAge int
+	//ocp-gen:fi
 }
 
-//ocp-gen:replace TestReconciler=RECONCILER_NAME
+// ocp-gen:replace TestReconciler=RECONCILER_NAME
 func (r *TestReconciler) Reconciler() {
- //ocp-gen:replace name=RECONCILER_NAME age=GOLINE
- var _age, name string
- //ocp-gen:replace name=RECONCILER_NAME
- _ = name
- //ocp-gen:replace age=GOLINE
- _ = _age
+	//ocp-gen:replace name=RECONCILER_NAME age=GOLINE
+	var _age, name string
+	//ocp-gen:replace name=RECONCILER_NAME
+	_ = name
+	//ocp-gen:replace age=GOLINE
+	_ = _age
 }
 ```
 

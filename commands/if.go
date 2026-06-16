@@ -31,12 +31,13 @@ func NewIfCommand() Command {
 // Execute implements [Command].
 func (r *ifCommand) Execute(loc string) string {
 	if CommandPrefix(loc, ocpIf) {
-		args := commandArguments(loc, ocpIf)
-		if len(args) > 1 {
-			logs.Debug(fmt.Sprintf("(%s) failed to parse (%s): invalid number of arguments", os.Getenv("GOFILE"), loc))
+		argAssignments := assignments(loc, ocpIf)
+		if len(argAssignments) != 1 {
+			logs.Debug(fmt.Sprintf("(%s) failed to parse (%s): invalid number of assignments", os.Getenv("GOFILE"), loc))
+			return loc
 		}
 		r.active = true
-		r.condition = EvalBoolEnv(args[0])
+		r.condition = (os.Getenv(argAssignments[0].left) == argAssignments[0].right)
 		logs.Debug(fmt.Sprintf("ifCommand condition = %v", r.condition))
 		logs.Debug(fmt.Sprintf("removed line: %s", loc))
 		// remove the ocp-gen comment as part of the processing
